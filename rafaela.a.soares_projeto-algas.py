@@ -57,6 +57,14 @@ try:
 #         print(f'{count}º Transação {n} {final_time} - Max mem {max_mem} KB - Min mem {min_mem} B')
         vwWithoutMemorysample.append(stop-start)
         
+        
+        query = "INSERT INTO transaction_without_memory(transacao, tempo_exec, max_mem, min_mem) " \
+                "VALUES(%s,%s,%s,%s)"
+        args = (n, final_time, max_mem, min_mem)
+    
+        cursor.execute(query, args)
+        db_connection.commit()
+
         query = "INSERT INTO passos_adulto(data) " \
                 "VALUES(%s)"
         args = (data, )
@@ -87,6 +95,13 @@ try:
         max_memory = max_mem/10**3
 #         print(f'{count}º Transação {n} {final_time} - Max mem {max_memory} KB - Min mem {min_mem} B')
         vwMemorysample.append(stop-start)
+
+        query = "INSERT INTO transaction_with_memory(transacao, tempo_exec, max_mem, min_mem) " \
+                "VALUES(%s,%s,%s,%s)"
+        args = (n, final_time, max_mem, min_mem)
+    
+        cursor.execute(query, args)
+        db_connection.commit()
         
     final = time.time()
 
