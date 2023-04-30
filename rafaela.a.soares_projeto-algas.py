@@ -21,7 +21,8 @@ print("Criando lista com valores de entrada\n\n")
 try:
     inicio = time.time()
     db_connection = mysql.connector.connect(
-        host='34.201.245.104', 
+        host='mysql', 
+        port='3306',
         user="root",
         password="urubu100",
         database="algas_transactions")
