@@ -18,76 +18,76 @@ for n in sample2:
     dataList.append(random.randint(0, 191))
 print("Criando lista com valores de entrada\n\n")
 
-try:
-    inicio = time.time()
-    db_connection = mysql.connector.connect(
-        host='mysql', 
-        port='3306',
-        user="root",
-        password="urubu100",
-        database="algas_transactions")
-    print("Iniciando conexão com database\n")
-    
-    cursor = db_connection.cursor()
-    
+# try:
+inicio = time.time()
+db_connection = mysql.connector.connect(
+    host='mysql', 
+    port='3306',
+    user="root",
+    password="urubu100",
+    database="algas_transactions")
+print("Iniciando conexão com database\n")
+
+cursor = db_connection.cursor()
+
 #     cursor.execute("TRUNCATE TABLE passos_adulto")
-    print("Limpando histórico da tabela\n")
+print("Limpando histórico da tabela\n")
+
+
+print("Iniciando transações\n\n")
+print("---- Without Memoryview Sample 2 ----")
+vwWithoutMemorySample2 = []
+count = 0
+for n in sample2:
+    data = dataList[n-1]
+    b = data
+    start = time.time()
+    max_mem = 0
+    min_mem = 0
+    while b:
+        if n == len(str(b)):
+            max_mem = getsizeof(b) - getsizeof('')
+        elif len(str(b)) == 1:
+            min_mem = getsizeof(b) - getsizeof('')
+        b = str(b)[1:]
+    stop = time.time()
+    count += 1
+    
+    final_time = stop-start
+    max_mem = max_mem/10**3
+#         print(f'{count}º Transação {n} {final_time} - Max mem {max_mem} KB - Min mem {min_mem} B')
+    vwWithoutMemorySample2.append(stop-start)
+    
+    query = "INSERT INTO passos_adulto(data) " \
+            "VALUES(%s)"
+    args = (data, )
+
+    cursor.execute(query, args)
+    db_connection.commit()
     
 
-    print("Iniciando transações\n\n")
-    print("---- Without Memoryview Sample 2 ----")
-    vwWithoutMemorySample2 = []
-    count = 0
-    for n in sample2:
-        data = dataList[n-1]
-        b = data
-        start = time.time()
-        max_mem = 0
-        min_mem = 0
-        while b:
-            if n == len(str(b)):
-                max_mem = getsizeof(b) - getsizeof('')
-            elif len(str(b)) == 1:
-                min_mem = getsizeof(b) - getsizeof('')
-            b = str(b)[1:]
-        stop = time.time()
-        count += 1
-        
-        final_time = stop-start
-        max_mem = max_mem/10**3
-#         print(f'{count}º Transação {n} {final_time} - Max mem {max_mem} KB - Min mem {min_mem} B')
-        vwWithoutMemorySample2.append(stop-start)
-        
-        query = "INSERT INTO passos_adulto(data) " \
-                "VALUES(%s)"
-        args = (data, )
+print("\n\n---- With Memoryview Sample 2 ----")
+vwMemorySample2 = []
+count = 0
+for n in sample2:
+    data = b'dataList[n-1]'
+    b = memoryview(data)
+    start = time.time()
+    max_mem = 0
+    min_mem = 0
+    while b:
+        if n == len(str(b)):
+            max_mem = getsizeof(b) - getsizeof('')
+        elif len(str(b)) == 1:
+            min_mem = getsizeof(b) - getsizeof('')
+        b = str(b)[1:]
+    stop = time.time()
+    count += 1
     
-        cursor.execute(query, args)
-        db_connection.commit()
-        
-    
-    print("\n\n---- With Memoryview Sample 2 ----")
-    vwMemorySample2 = []
-    count = 0
-    for n in sample2:
-        data = b'dataList[n-1]'
-        b = memoryview(data)
-        start = time.time()
-        max_mem = 0
-        min_mem = 0
-        while b:
-            if n == len(str(b)):
-                max_mem = getsizeof(b) - getsizeof('')
-            elif len(str(b)) == 1:
-                min_mem = getsizeof(b) - getsizeof('')
-            b = str(b)[1:]
-        stop = time.time()
-        count += 1
-        
-        final_time = stop-start
-        max_memory = max_mem/10**3
+    final_time = stop-start
+    max_memory = max_mem/10**3
 #         print(f'{count}º Transação {n} {final_time} - Max mem {max_memory} KB - Min mem {min_mem} B')
-        vwMemorySample2.append(stop-start)
+    vwMemorySample2.append(stop-start)
         
     final = time.time()
 
@@ -111,5 +111,5 @@ try:
 #     plt.legend()
 #     plt.show()
     
-finally:
-    db_connection.close()
+# finally:
+#     db_connection.close()
